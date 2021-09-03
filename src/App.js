@@ -1,58 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { CircularProgress } from '@material-ui/core';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { AppHeader } from './cmps/app-header';
+import { TodoApp } from './pages/todo-app';
+import { TodoDetails } from './pages/todo-details';
+import { UserProfile } from './pages/user-profile';
+import { userService } from './services/user.service';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+class _App extends Component {
+  componentDidMount() {
+    this.loadUser();
+  }
+
+  loadUser = async () => {
+    const user = await userService.getUser();
+    this.props.dispatch({ type: 'UPDATE_USER', user });
+  };
+
+  render() {
+    if (!this.props.user) return <CircularProgress />;
+    const { color, bgColor } = this.props.user.prefs;
+    return (
+      <>
+        <Router>
+          <AppHeader />
+          <main className="app-main" style={{ color, backgroundColor: bgColor }}>
+            <Switch>
+              <Route path="/todo/:id/edit" component={TodoDetails} />
+              <Route path="/todo/:id" component={TodoDetails} />
+              <Route path="/user" component={UserProfile} />
+              <Route path="/" component={TodoApp} />
+            </Switch>
+          </main>
+          <footer></footer>
+        </Router>
+      </>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = state => {
+  const { user } = state;
+  return { user };
+};
+
+export const App = connect(mapStateToProps)(_App);

@@ -1,0 +1,17 @@
+.todo-preview {
+    border-bottom: 1px solid rgb(235, 235, 235);
+    cursor: pointer;
+}
+
+.todo-preview:hover {
+    background-color: #fcfcfc;
+    cursor: pointer;
+}
+
+.todo-preview.done {
+    background-color: rgb(249, 255, 233);
+}
+
+.todo-preview.done .btn-done, .todo-preview.done .btn-delete {
+    color: rgb(0, 128, 6);
+}

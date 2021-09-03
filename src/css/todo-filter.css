@@ -1,0 +1,15 @@
+.todo-filter {
+    display: flex;
+    border-bottom: 1px solid rgb(245, 245, 245);
+    gap: 20px;
+}
+
+.todo-filter .search {
+    display: flex;
+    gap: 20px;
+    padding-left: 20px;
+    align-items: center;
+    background-color: rgb(240, 240, 240);
+    width: 100%;
+    /* min-width: 500px; */
+}

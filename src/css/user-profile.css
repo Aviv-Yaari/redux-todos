@@ -1,0 +1,14 @@
+.user-profile .user-activities {
+    line-height: 1.75em;
+}
+
+.user-profile .prefs {
+    margin-top: 50px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 6px 0 #bdbdbd;
+}
