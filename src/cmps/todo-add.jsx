@@ -19,18 +19,19 @@ export class TodoAdd extends Component {
   render() {
     const { text } = this.state.todo;
     return (
-      <section className="todo-add">
-        <h2>Add Todo!</h2>
-        <form onSubmit={this.onAddTodo}>
-          <TextField
-            name="text"
-            onChange={this.handleChange}
-            value={text}
-            placeholder="Type your task here"
-          />
-          <Button type="submit">Add</Button>
-        </form>
-      </section>
+      <form className="todo-add" onSubmit={this.onAddTodo}>
+        <TextField
+          className="text"
+          variant="outlined"
+          name="text"
+          onChange={this.handleChange}
+          value={text}
+          placeholder="Type your task here"
+        />
+        <Button type="submit" className="add" variant="outlined">
+          Add
+        </Button>
+      </form>
     );
   }
 }

@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { Button, TextField } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import { UserActivities } from '../cmps/user-activities';
+import { updateUser } from '../store/actions/user.actions';
 import '../css/user-profile.css';
+import { showUserMsg } from '../store/actions/general.actions';
+import { userService } from '../services/user.service';
 
 class _UserProfile extends Component {
   state = {
@@ -19,11 +22,13 @@ class _UserProfile extends Component {
     this.setState(prevState => ({ formData: { ...prevState.formData, [name]: value } }));
   };
 
-  onFormSubmit = ev => {
+  onFormSubmit = async ev => {
     ev.preventDefault();
     let { fullName, color, bgColor } = this.state.formData;
     const prefs = { color, bgColor };
-    this.props.dispatch({ type: 'UPDATE_USER', user: { ...this.props.user, fullName, prefs } });
+    await userService.updateUser(fullName, prefs);
+    this.props.updateUser(this.props.user, fullName, prefs);
+    this.props.showUserMsg('Updated profile');
   };
 
   render() {
@@ -32,9 +37,8 @@ class _UserProfile extends Component {
     if (!user) return <CircularProgress />;
     return (
       <main className="user-profile">
-        <h1>User Profile - {user.fullName}</h1>
-        <UserActivities activities={user.activities} />
         <form className="prefs" onSubmit={this.onFormSubmit}>
+          <h2>User Profile - {user.fullName}</h2>
           <TextField
             name="fullName"
             label="Full Name"
@@ -60,14 +64,21 @@ class _UserProfile extends Component {
           />
           <Button type="submit">Update Settings</Button>
         </form>
+        <UserActivities activities={user.activities} />
       </main>
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { todos, user } = state;
+  const { user } = state.userModule;
+  const { todos } = state.todoModule;
   return { todos, user };
 };
 
-export const UserProfile = connect(mapStateToProps)(_UserProfile);
+const mapDispatchToProps = {
+  updateUser,
+  showUserMsg,
+};
+
+export const UserProfile = connect(mapStateToProps, mapDispatchToProps)(_UserProfile);

@@ -3,7 +3,12 @@ import { TodoPreview } from './todo-preview';
 
 export const TodoList = props => {
   const { todos, onRemoveTodo, onToggleTodo, onTodoClick } = props;
-  if (!todos) return <CircularProgress color="secondary" />;
+  if (!todos)
+    return (
+      <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <CircularProgress color="secondary" />
+      </div>
+    );
   return (
     <List>
       {todos.map(todo => (

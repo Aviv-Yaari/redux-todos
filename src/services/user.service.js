@@ -1,6 +1,6 @@
 import { storageService } from './storage.service';
 
-export const userService = { getUser, createActivity };
+export const userService = { getUser, createActivity, updateUser };
 
 let gUser = _loadUser() || {
   fullName: 'Puki Ben David',
@@ -14,6 +14,12 @@ async function getUser() {
 
 async function createActivity(activity) {
   gUser.activities.unshift(activity);
+  _saveUser();
+}
+
+async function updateUser(fullName, prefs) {
+  gUser.fullName = fullName;
+  gUser.prefs = prefs;
   _saveUser();
 }
 

@@ -2,8 +2,9 @@ import { Button, CircularProgress, IconButton, TextField } from '@material-ui/co
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { todoService } from '../services/todo.service';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { loadTodos, updateTodo } from '../store/actions/todo.actions';
+import { addActivity } from '../store/actions/user.actions';
 
 class _TodoDetails extends Component {
   state = { isEditMode: false };
@@ -24,25 +25,19 @@ class _TodoDetails extends Component {
 
   loadTodo = async () => {
     const { id } = this.props.match.params;
-    const todos = await todoService.getTodos({ id });
-    this.props.dispatch({ type: 'SET_TODOS', todos });
+    this.props.loadTodos(id);
   };
 
-  onToggleTodo = async () => {
-    const todo = this.props.todos[0];
-    const { _id } = todo;
-    let status = 'done';
-    if (todo.status === 'done') status = 'active';
-    await todoService.update(_id, { status });
-    this.props.dispatch({ type: 'UPDATE_TODO', id: _id, data: { status } });
-    const activity = { text: 'Marked ' + todo.text + ' as ' + status, at: Date.now() };
-    this.props.dispatch({ type: 'ADD_ACTIVITY', activity });
+  onToggleTodo = async todo => {
+    let status = todo.status === 'done' ? 'active' : 'done';
+    this.props.updateTodo(todo, { status });
+    this.props.addActivity('Updated', todo);
   };
 
   handleChange = ev => {
     const { name, value } = ev.target;
-    const { _id } = this.props.todos[0];
-    this.props.dispatch({ type: 'UPDATE_TODO', id: _id, data: { [name]: value } });
+    const todo = this.props.todos[0];
+    this.props.updateTodo(todo, { [name]: value });
   };
 
   render() {
@@ -82,7 +77,7 @@ class _TodoDetails extends Component {
               </div>
               <div>
                 <label>Status:</label>
-                <IconButton onClick={this.onToggleTodo} aria-label="mark as done">
+                <IconButton onClick={() => this.onToggleTodo(todo)} aria-label="mark as done">
                   <CheckCircleIcon style={{ color: status === 'done' ? 'green' : 'unset' }} />
                 </IconButton>
               </div>
@@ -98,8 +93,14 @@ class _TodoDetails extends Component {
 }
 
 const mapStateToProps = state => {
-  const { todos } = state;
+  const { todos } = state.todoModule;
   return { todos };
 };
 
-export const TodoDetails = connect(mapStateToProps)(_TodoDetails);
+const mapDispatchToProps = {
+  loadTodos,
+  addActivity,
+  updateTodo,
+};
+
+export const TodoDetails = connect(mapStateToProps, mapDispatchToProps)(_TodoDetails);

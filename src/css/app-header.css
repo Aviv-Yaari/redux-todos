@@ -4,7 +4,8 @@
     gap: 30px;
     border-bottom: 1px solid rgb(245, 245, 245);
     margin-bottom: 20px;
-    padding: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     min-height: 50px;
     box-shadow: 0px 0px 5px 0px rgba(114, 114, 114, 0.133);
 }
@@ -26,6 +27,7 @@
 }
 
 .app-header .logo {
+    padding-left: 0;
     font-size: 1.45em;
     color: rgb(250, 37, 0);
     text-transform: uppercase;

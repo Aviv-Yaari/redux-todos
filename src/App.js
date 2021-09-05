@@ -1,4 +1,5 @@
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -6,25 +7,34 @@ import { AppHeader } from './cmps/app-header';
 import { TodoApp } from './pages/todo-app';
 import { TodoDetails } from './pages/todo-details';
 import { UserProfile } from './pages/user-profile';
-import { userService } from './services/user.service';
+import { loadUser } from './store/actions/user.actions';
+import { hideUserMsg } from './store/actions/general.actions';
 
 class _App extends Component {
   componentDidMount() {
-    this.loadUser();
+    this.props.loadUser();
   }
-
-  loadUser = async () => {
-    const user = await userService.getUser();
-    this.props.dispatch({ type: 'UPDATE_USER', user });
-  };
 
   render() {
     if (!this.props.user) return <CircularProgress />;
     const { color, bgColor } = this.props.user.prefs;
+    const { user, todos, userMsg } = this.props;
     return (
       <>
         <Router>
-          <AppHeader />
+          <Snackbar
+            open={userMsg.isOpen}
+            autoHideDuration={6000}
+            onClose={() => this.props.hideUserMsg()}>
+            <MuiAlert
+              elevation={6}
+              variant="filled"
+              onClose={() => this.props.hideUserMsg()}
+              severity={userMsg.type}>
+              {userMsg.msg}
+            </MuiAlert>
+          </Snackbar>
+          <AppHeader user={user} todos={todos} />
           <main className="app-main" style={{ color, backgroundColor: bgColor }}>
             <Switch>
               <Route path="/todo/:id/edit" component={TodoDetails} />
@@ -41,8 +51,15 @@ class _App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { user } = state;
-  return { user };
+  const { user } = state.userModule;
+  const { todos } = state.todoModule;
+  const { userMsg } = state.generalModule;
+  return { user, todos, userMsg };
 };
 
-export const App = connect(mapStateToProps)(_App);
+const mapDispatchToProps = {
+  loadUser,
+  hideUserMsg,
+};
+
+export const App = connect(mapStateToProps, mapDispatchToProps)(_App);
