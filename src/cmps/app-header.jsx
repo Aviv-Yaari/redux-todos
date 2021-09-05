@@ -13,7 +13,7 @@ export class AppHeader extends Component {
   };
 
   render() {
-    const { todos, user } = this.props;
+    const { user } = this.props;
     const completedPrc = this.calcTodosCompleted();
     return (
       <header className="app-header app-main">

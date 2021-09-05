@@ -1,17 +1,20 @@
+import _ from 'lodash';
+
 const initialState = {
   user: null,
 };
 
 export function userReducer(state = initialState, action) {
+  const stateCopy = _.cloneDeep(state);
   switch (action.type) {
     case 'UPDATE_USER':
-      return { ...state, user: action.user };
+      stateCopy.user = action.user;
+      break;
     case 'ADD_ACTIVITY':
-      return {
-        ...state,
-        user: { ...state.user, activities: [action.activity, ...state.user.activities] },
-      };
+      stateCopy.user.activities.unshift(action.activity);
+      break;
     default:
-      return state;
+      break;
   }
+  return stateCopy;
 }

@@ -1,30 +1,33 @@
+import _ from 'lodash';
+
 export const initialState = {
   todos: null,
   filter: { status: 'all', text: '' },
 };
 
 export function todoReducer(state = initialState, action) {
+  const stateCopy = _.cloneDeep(state);
+  let idx;
   switch (action.type) {
     case 'SET_TODOS':
-      return { ...state, todos: action.todos };
+      stateCopy.todos = action.todos;
+      break;
     case 'ADD_TODO':
-      return {
-        ...state,
-        todos: [action.todo, ...state.todos],
-      };
+      stateCopy.todos.push(action.todo);
+      break;
     case 'REMOVE_TODO':
-      return {
-        ...state,
-        todos: state.todos.filter(todo => todo._id !== action.id),
-      };
+      idx = stateCopy.todos.findIndex(todo => todo._id === action.id);
+      if (idx !== -1) stateCopy.todos.splice(idx, 1);
+      break;
     case 'UPDATE_TODO':
-      // prettier-ignore
-      const todos = state.todos.map(todo => todo._id === action.id ? {...todo, ...action.data} : todo)
-      return { ...state, todos };
-    // filter:
+      idx = stateCopy.todos.findIndex(todo => todo._id === action.id);
+      if (idx !== -1) stateCopy.todos[idx] = { ...stateCopy.todos[idx], ...action.data };
+      break;
     case 'SET_FILTER':
-      return { ...state, filter: action.filter };
+      stateCopy.filter = action.filter;
+      break;
     default:
-      return state;
+      break;
   }
+  return stateCopy;
 }
